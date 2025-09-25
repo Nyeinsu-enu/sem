@@ -7,4 +7,6 @@ This is the updated readme file
 
 [![Releases](https://img.shields.io/github/release/Nyeinsu-enu/sem/all.svg?style=flat-square)](https://github.com/Nyeinsu-enu/sem/releases)
 
+![GitHub Workflow Status (branch)](https://img.shields.io/github/actions/workflow/status/Nyeinsu-enu/sem/main.yml?branch=develop&style=flat-square)
+
 
