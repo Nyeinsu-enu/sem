@@ -4,7 +4,7 @@ on: push
 jobs:
   build:
     name: Hello world action
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -15,8 +15,10 @@ jobs:
         with:
           java-version: '25'
           distribution: 'adopt'
-      - name: Build with Maven
-        run: mvn package
-      - name: Run docker compose
-        run: docker compose up --abort-on-container-exit
+      - name: Unit Tests
+        run: mvn -Dtest=com.napier.devops.AppTest test
+      - name: Package and Run docker compose
+        run: |
+          mvn package -DskipTests
+          docker compose up --abort-on-container-exit
 
