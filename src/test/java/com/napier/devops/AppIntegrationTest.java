@@ -15,8 +15,16 @@ public class AppIntegrationTest {
     void init() {
         app = new App();
 
-        // Detect host from environment or default to localhost:33060
-        String dbHost = System.getenv().getOrDefault("DB_HOST", "localhost:33060");
+        // Detect environment: GitHub Actions / Docker vs Local
+        String env = System.getenv("GITHUB_ACTIONS");
+
+        // If running inside GitHub Actions or Docker, use internal host
+        String dbHost;
+        if (env != null && env.equals("true")) {
+            dbHost = "db:3306";
+        } else {
+            dbHost = "localhost:33060";
+        }
 
         System.out.println("Connecting to database at: " + dbHost);
         app.connect(dbHost, 30000);
