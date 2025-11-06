@@ -5,31 +5,21 @@ import java.util.ArrayList;
 
 public class App {
     public static void main(String[] args) {
-        // Create new Application
+        // Create new Application and connect to database
         App a = new App();
 
-        // Connect to database
-        a.connect();
-
-        // Get department by name (for example, "Marketing")
-        Department dept = a.getDepartment("Marketing");
-
-        // Check if department exists
-        if (dept != null) {
-            System.out.println("Department: " + dept.dept_name + " (" + dept.dept_no + ")\n");
-
-            // Get salaries of all employees in this department
-            ArrayList<Employee> employees = a.getSalariesByDepartment(dept);
-
-            // Print department employees and their salaries
-            a.printSalaries(employees);
-
-            // Display total number of employees found
-            if (employees != null)
-                System.out.println("\nTotal employees in " + dept.dept_name + ": " + employees.size());
-        } else {
-            System.out.println("Department not found.");
+        if(args.length < 1){
+            a.connect("localhost:33060", 30000);
+        }else{
+            a.connect(args[0], Integer.parseInt(args[1]));
         }
+
+        Department dept = a.getDepartment("Development");
+        ArrayList<Employee> employees = a.getSalariesByDepartment(dept);
+
+
+        // Print salary report
+        a.printSalaries(employees);
 
         // Disconnect from database
         a.disconnect();
@@ -43,7 +33,7 @@ public class App {
     /**
      * Connect to the MySQL database.
      */
-    public void connect() {
+    public void connect(String location, int delay) {
         try {
             // Load Database driver
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -52,22 +42,20 @@ public class App {
             System.exit(-1);
         }
 
-        int retries = 20;
+        int retries = 10;
         for (int i = 0; i < retries; ++i) {
             System.out.println("Connecting to database...");
             try {
                 // Wait a bit for db to start
-                Thread.sleep(10000);
+                Thread.sleep(delay);
                 // Connect to database
-                con = DriverManager.getConnection(
-                        "jdbc:mysql://db:3306/employees?allowPublicKeyRetrieval=true&useSSL=false",
-                        "root",
-                        "example"
-                );
+                con = DriverManager.getConnection("jdbc:mysql://" + location
+                                + "/employees?allowPublicKeyRetrieval=true&useSSL=false",
+                        "root", "example");
                 System.out.println("Successfully connected");
                 break;
             } catch (SQLException sqle) {
-                System.out.println("Failed to connect to database attempt " + i);
+                System.out.println("Failed to connect to database attempt " +                                  Integer.toString(i));
                 System.out.println(sqle.getMessage());
             } catch (InterruptedException ie) {
                 System.out.println("Thread interrupted? Should not happen.");
