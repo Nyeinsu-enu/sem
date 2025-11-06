@@ -2,10 +2,6 @@ package com.napier.devops;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-
-import java.util.ArrayList;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AppIntegrationTest
@@ -16,17 +12,18 @@ public class AppIntegrationTest
     static void init()
     {
         app = new App();
-        // "employees" ဆိုတာ GitHub Actions မှာ docker run --name employees လုပ်ထားတဲ့ container name ပါ
+        // Use container name ("employees") instead of localhost
+        // because GitHub Actions runs DB inside Docker
         app.connect("employees:3306", 30000);
     }
-
 
     @Test
     void testGetEmployee()
     {
         Employee emp = app.getEmployee(255530);
-        assertEquals(emp.emp_no, 255530);
-        assertEquals(emp.first_name, "Ronghao");
-        assertEquals(emp.last_name, "Garigliano");
+        assertNotNull(emp, "Employee should not be null — check if test data exists in DB");
+        assertEquals(255530, emp.emp_no);
+        assertEquals("Ronghao", emp.first_name);
+        assertEquals("Garigliano", emp.last_name);
     }
 }
