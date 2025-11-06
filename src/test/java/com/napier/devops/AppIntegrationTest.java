@@ -16,9 +16,10 @@ public class AppIntegrationTest
     static void init()
     {
         app = new App();
-        app.connect("localhost:33060", 30000);
-
+        // "employees" ဆိုတာ GitHub Actions မှာ docker run --name employees လုပ်ထားတဲ့ container name ပါ
+        app.connect("employees:3306", 30000);
     }
+
 
     @Test
     void testGetEmployee()
