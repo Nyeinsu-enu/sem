@@ -8,13 +8,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AppIntegrationTest {
+
     static App app;
 
     @BeforeAll
     void init() {
         app = new App();
-        // Use container hostname and port 3306
-        app.connect("db:3306", 30000);
+
+        // Detect host from environment or default to localhost:33060
+        String dbHost = System.getenv().getOrDefault("DB_HOST", "localhost:33060");
+
+        System.out.println("Connecting to database at: " + dbHost);
+        app.connect(dbHost, 30000);
     }
 
     @Test
