@@ -39,7 +39,8 @@ public class App {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             System.out.println("Could not load SQL driver");
-            System.exit(-1);
+//            System.exit(-1);
+            throw new RuntimeException("JDBC Driver not found", e);
         }
 
         int retries = 10;
@@ -60,6 +61,9 @@ public class App {
             } catch (InterruptedException ie) {
                 System.out.println("Thread interrupted? Should not happen.");
             }
+        }
+        if (con == null) {
+            throw new RuntimeException("Failed to connect to database after retries");
         }
     }
 
