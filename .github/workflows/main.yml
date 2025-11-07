@@ -37,11 +37,13 @@ jobs:
       - name: Integration Tests and CodeCov
         run: |
           docker build -t database ./db 
-          docker run --name employees -dp 33060:3306 database
+          docker run -d --name employees -p 33060:3306 database
+          sleep 15  # 🕒 DB container start ဖြစ်အောင်စောင့်
           mvn -Dtest=com.napier.devops.AppIntegrationTest test          
           docker stop employees
           docker rm employees
           docker image rm database
+
       - name: CodeCov
         uses: codecov/codecov-action@v2
         with:
