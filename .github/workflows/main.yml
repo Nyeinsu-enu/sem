@@ -34,17 +34,17 @@ jobs:
         with:
           java-version: '25'
           distribution: 'adopt'
-      - name: Integration Tests and CodeCov
+      - name: Integration Tests
         run: |
-          docker build -t database ./db 
-          docker run --name employees -dp 33060:3306 database
-          echo "⏳ Waiting for MySQL to be ready..."
-          sleep 25
-          docker logs employees
-          mvn -Dtest=com.napier.devops.AppIntegrationTest test          
+          docker build -t database ./db
+          docker run --name employees -e MYSQL_ROOT_PASSWORD=example -e MYSQL_DATABASE=employees -dp 33060:3306 database
+          echo "⏳ Waiting for MySQL to initialize..."
+          sleep 60
+          mvn -Dtest=com.napier.devops.AppIntegrationTest test
           docker stop employees
           docker rm employees
           docker image rm database
+      
       
 
       - name: CodeCov
@@ -80,3 +80,5 @@ jobs:
           directory: ./target/site/jacoco
           flags: Integration Tests # optional
           verbose: true # optional (default = false)
+
+
