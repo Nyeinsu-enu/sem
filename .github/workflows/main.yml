@@ -1,9 +1,6 @@
 name: A workflow for my Hello World App
-on:
-  push:
-    branches:
-      - master
-      - lab08
+on: push
+
 jobs:
   UnitTests:
     name: Unit Tests
@@ -34,23 +31,35 @@ jobs:
         with:
           java-version: '25'
           distribution: 'adopt'
-      - name: Integration Tests and CodeCov
+      - name: Integration Tests
         run: |
-          docker build -t database ./db 
-          docker run --name employees -dp 33060:3306 database
-          mvn -Dtest=com.napier.devops.AppIntegrationTest test          
+          docker build -t database ./db
+          docker run --name employees -dp 33060:3306 \
+          -e MYSQL_ROOT_PASSWORD=example \
+          -e MYSQL_ROOT_HOST=% \
+          database
+          # wait a few seconds for MySQL to be ready
+          sleep 20
+          mvn -Dtest=com.napier.devops.AppIntegrationTest test
           docker stop employees
           docker rm employees
-          docker image rm database
+          docker image rm database    
+
       - name: CodeCov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v4.0.1
         with:
-          # token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
-          directory: ./target/site/jacoco
-          flags: Integration Tests # optional
-          verbose: true # optional (default = false)
+            token: ${{ secrets.CODECOV_TOKEN }} # now required for public repos too
+            files: ./target/site/jacoco/jacoco.xml
+            flags: Integration Tests # optional
+            verbose: true # optional (default = false)
+            slug: Nyeinsu-enu/sem
+
+
+
+
+
   build:
-    name: Build and Start Using docker compose
+    name: Build and Start Using docker-compose
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
@@ -66,5 +75,3 @@ jobs:
         run: |
           mvn package -DskipTests
           docker compose up --abort-on-container-exit
-    
-    
