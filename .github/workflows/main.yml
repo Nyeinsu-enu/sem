@@ -54,10 +54,6 @@ jobs:
             verbose: true # optional (default = false)
             slug: Nyeinsu-enu/sem
 
-
-
-
-
   build:
     name: Build and Start Using docker-compose
     runs-on: ubuntu-22.04
