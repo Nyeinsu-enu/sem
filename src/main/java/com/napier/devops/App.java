@@ -9,8 +9,8 @@ public class App {
         App a = new App();
 
         if(args.length < 1){
-            a.connect("localhost:33060", 30000);
-        }else{
+            a.connect("localhost:3306", 30000);   // FIXED ✔
+    }else{
             a.connect(args[0], Integer.parseInt(args[1]));
         }
 
@@ -246,6 +246,24 @@ public class App {
             System.out.println(e.getMessage());
             System.out.println("Failed to get salaries by department");
             return null;
+        }
+    }
+
+    public void addEmployee(Employee emp)
+    {
+        try
+        {
+            Statement stmt = con.createStatement();
+            String strUpdate =
+                    "INSERT INTO employees (emp_no, first_name, last_name, birth_date, gender, hire_date) " +
+                            "VALUES (" + emp.emp_no + ", '" + emp.first_name + "', '" + emp.last_name + "', " +
+                            "'9999-01-01', 'M', '9999-01-01')";
+            stmt.execute(strUpdate);
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+            System.out.println("Failed to add employee");
         }
     }
 
